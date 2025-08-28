@@ -1,0 +1,67 @@
+pipeline:
+  name: Ave Mundus
+  identifier: Ave_Mundus
+  projectIdentifier: default_project
+  orgIdentifier: default
+  tags: {}
+  properties:
+    ci:
+      codebase:
+        connectorRef: account.Github_OAuth_1720712504098
+        repoName: aedifex/avemundus
+        build: <+input>
+  stages:
+    - stage:
+        name: Run Tests
+        identifier: Run_Tests
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: true
+          caching:
+            enabled: true
+            override: false
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: Execute Tests
+                  identifier: Go FMT
+                  spec:
+                    shell: Sh
+                    command: |
+                    # Ensure goimports is installed
+                    if ! command -v goimports &> /dev/null; then
+                      echo "goimports not found, installing..."
+                      go install golang.org/x/tools/cmd/goimports@latest
+                      export PATH=$PATH:$(go env GOPATH)/bin
+                    fi
+                    # Run gofmt and goimports
+                    GOFMT_OUT=$(gofmt -l .)
+                    GOIMPORTS_OUT=$(goimports -l .)
+
+                    echo "=== gofmt output ==="
+                    echo "$GOFMT_OUT"
+                    echo "=== goimports output ==="
+                    echo "$GOIMPORTS_OUT"
+
+                    # Fail the pipeline if formatting issues are found
+                    if [ -n "$GOFMT_OUT" ] || [ -n "$GOIMPORTS_OUT" ]; then
+                      echo "Formatting issues detected. Please run 'gofmt -w .' and/or 'goimports -w .' locally to fix."
+                      exit 1
+                    fi
+
+                    echo "Format checks passed."
+            - step:
+                  type: Run
+                  name: Execute Tests
+                  identifier: Execute_Tests
+                  spec:
+                    shell: Sh
+                    command: go test -v
