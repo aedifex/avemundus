@@ -35,4 +35,4 @@ pipeline:
                   identifier: Execute_Tests
                   spec:
                     shell: Sh
-                    command: go test -v
+                    command: go test
