@@ -1,0 +1,14 @@
+inputSet:
+  name: PR Trigger
+  identifier: PR_Trigger
+  orgIdentifier: default
+  projectIdentifier: default_project
+  pipeline:
+    identifier: Ave_Mundus
+    properties:
+      ci:
+        codebase:
+          build:
+            type: PR
+            spec:
+              number: <+trigger.prNumber>

@@ -1,0 +1,11 @@
+inputSet:
+  name: Build on Push Input
+  identifier: Build_on_Push_Input
+  orgIdentifier: default
+  projectIdentifier: default_project
+  pipeline:
+    identifier: Ave_Mundus
+    properties:
+      ci:
+        codebase:
+          build: <+input>
